@@ -7,3 +7,4 @@ Vue.component('ContentWrap', () => import("../components/common/ContentWrap.vue"
 Vue.component('List', () => import("../components/common/List.vue"))
 Vue.component('Rate', () => import("../components/common/Rate.vue"))
 Vue.component('Scroll', () => import("../components/common/Scroll.vue"))
+Vue.component('Loading', () => import("../components/common/Loading.vue"))

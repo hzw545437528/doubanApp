@@ -7,10 +7,12 @@
             class="tabs"
             :selectTab="selectTab"
         ></ToolBar>
+        <Loading v-if="loading"></Loading>
         <div
             class="cinemas-maincontainer"
             :class="{isSafari:$store.state.isSafari}"
             ref="container"
+            v-else
         >
             <List :info="hot" v-show="selectTab == 0">
                 <template #list-right="{info}">
@@ -22,7 +24,7 @@
                 </template>
             </List>
             <!-- <List :info="upComing" v-show="selectTab == 1"></List> -->
-            <UpComing :info="upComing" v-show="selectTab==1"></UpComing>
+            <UpComing :info="upComing" :total="getUpComingRes.total" v-show="selectTab==1"></UpComing>
         </div>
     </div>
 </template>
@@ -40,6 +42,7 @@ import UpComing from "./audios/UpComing.vue";
 export default class Cinames extends Vue {
     @Provide() toolBar: Array<any> = ["正在热映", "即将上映", "11月观影指南"];
     @Provide() selectTab: number = (this.$store as any).getters.audioPageTab;
+    @Provide() loading: boolean = true;
     start: number = 0;
     getHotRes: any = {};
     getUpComingRes: any = {};
@@ -56,6 +59,7 @@ export default class Cinames extends Vue {
                 this.start += 20;
                 this.getHotRes = res.data;
                 this.hot = res.data.subjects;
+                this.loading = false;
                 console.log(this.hot);
             });
     }
@@ -70,6 +74,7 @@ export default class Cinames extends Vue {
                 this.start += 20;
                 this.getUpComingRes = res.data;
                 this.upComing = res.data.subjects;
+                this.loading = false;
                 console.log(this.upComing);
             });
     }
@@ -77,8 +82,10 @@ export default class Cinames extends Vue {
         this.selectTab = i;
         this.start = 0;
         if (this.selectTab == 0 && this.hot.length == 0) {
+            this.loading = true;
             this.getHot();
         } else if (this.selectTab == 1 && this.upComing.length == 0) {
+            this.loading = true;
             this.getUpComing();
         }
     }

@@ -3,7 +3,7 @@
         <div class="upcoming-head">
             <div class="upcoming-headname">
                 影视
-                <span>64</span>
+                <span>{{total}}</span>
             </div>
             <div class="upcoming-headsort btn">
                 <span :class="{active: sort==0}" @click="sort = 0">时间</span>
@@ -20,10 +20,10 @@
                 <template #default>
                     <div>
                         <div v-for="(item,key, index) in sortByTime" :key="index">
-                            {{key}}{{getDay(key)}}
+                            <div class="list-head">{{getDate(key)}}{{getDay(key)}}</div>
                             <List :info="item" :hasPub="false">
                                 <template #list-right="{info}">
-                                    <ListFavor></ListFavor>
+                                    <ListFavor :extra="info.collect_count"></ListFavor>
                                 </template>
                             </List>
                         </div>
@@ -47,7 +47,8 @@ export default Vue.extend({
         };
     },
     props: {
-        info: Array
+        info: Array,
+        total: Number
     },
     components: {
         ListFavor
@@ -66,6 +67,13 @@ export default Vue.extend({
             });
             this.sortByTime = Object.assign({}, this.sortByTime, obj);
             console.log(this.sortByTime);
+        },
+        getDate(date: any) {
+            console.log(date);
+            let d = "";
+            let arr = date.split("-");
+            d = arr[1] + "月" + arr[2] + "日，";
+            return d;
         },
         getDay(date: any) {
             let time = new Date(date);
@@ -170,5 +178,11 @@ export default Vue.extend({
 }
 .upcoming-main-container {
     height: calc(100% - 48px);
+}
+
+.list-head {
+    padding: 5px 15px;
+    background: #ececec;
+    color: #999999;
 }
 </style>

@@ -82,9 +82,7 @@ export default class Panel extends Vue {
     }
     @Emit("show-all")
     showAll() {}
-    created() {
-        console.log(this.info_);
-    }
+    created() {}
 }
 </script>
 <style lang="scss">

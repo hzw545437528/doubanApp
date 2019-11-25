@@ -1,7 +1,8 @@
 <template>
     <div class="audios">
         <ToolBar :toolbarInfo="toolbarInfo" class="audios-toolbar"></ToolBar>
-        <ContentWrap>
+        <Loading v-if="isLoadgin"></Loading>
+        <ContentWrap v-else>
             <template #default>
                 <div class="audio-container">
                     <toolbar-circle></toolbar-circle>
@@ -36,6 +37,7 @@ import Panel from "../components/audios/panel.vue";
     }
 })
 export default class Audios extends Vue {
+    @Provide() loading: boolean = true;
     @Provide()
     toolbarInfo: Array<String> = [
         "电影",
@@ -90,6 +92,7 @@ export default class Audios extends Vue {
                 });
         }
     }
+
     handleSelectTab(val: string, selectTab: number): void {
         this.selectTab = selectTab;
         this.$store.dispatch("setAudioPageTab", selectTab);
@@ -112,10 +115,16 @@ export default class Audios extends Vue {
             }
         });
     }
+    get isLoadgin() {
+        let bool = true;
+        if (this.hot.length != 0 && this.upComing.length != 0) {
+            bool = false;
+        }
+        return bool;
+    }
 
     public created() {
         (this as any).handleUpComing();
-
         (this as any).handleHotMovie();
     }
 }
@@ -123,6 +132,7 @@ export default class Audios extends Vue {
 <style lang="scss">
 .audios {
     margin-top: 41px;
+    height: calc(100% - 41px);
 }
 .audios-toolbar {
     justify-content: space-around;
