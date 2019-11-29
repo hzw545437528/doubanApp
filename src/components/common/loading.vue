@@ -67,16 +67,16 @@ export default Vue.extend({
     }
 }
 .load-wrap {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 40px;
+    height: 40px;
     overflow: hidden;
     position: relative;
     margin-top: 10px;
     .load-icon {
         position: absolute;
-        width: 0.5rem;
-        height: 0.5rem;
-        top: -0.25rem;
+        width: 40px;
+        height: 40px;
+        top: -20px;
         border: 3px solid #999999;
         border-radius: 50%;
     }

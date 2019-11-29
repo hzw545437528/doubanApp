@@ -22,10 +22,26 @@ li {
     font-size: 11px;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
 li,
 a,
 i,
 button,
 span {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+a {
+    text-decoration: none;
+    color: #999999;
+
 }

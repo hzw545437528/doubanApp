@@ -4,6 +4,7 @@ const service = {
     getService(url: string, params: any) {
         return new Promise(resolve => {
             console.log(url);
+            params = params || {}
             params.apikey = key;
             (vue as any).$axios.get(url, { params }).then((res: any) => {
                 resolve(res)

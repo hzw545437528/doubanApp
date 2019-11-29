@@ -1,13 +1,17 @@
 <template>
     <div id="index">
-        <div class="search-wrap" :class="{'home-search-wrap': $store.getters.isHome}">
+        <div
+            class="search-wrap"
+            :class="{'home-search-wrap': $store.getters.isHome}"
+            v-if="$store.state.showSearchWrap"
+        >
             <SearchInput></SearchInput>
             <Icon class="email-icon" :class="{'home-search-wrap': $store.getters.isHome}"></Icon>
         </div>
         <div class="main-container">
             <router-view></router-view>
         </div>
-        <div class="tabbar-wrap">
+        <div class="tabbar-wrap" v-if="$store.state.showTabbar">
             <Tabbar></Tabbar>
         </div>
     </div>
@@ -67,7 +71,6 @@ export default class index extends Vue {}
 .main-container {
     width: 100vw;
     margin-top: 45px;
-    height: calc(100vh - 105px);
     overflow: hidden;
 }
 </style>

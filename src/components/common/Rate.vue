@@ -58,7 +58,7 @@ export default class Rate extends Vue {
             }
         }
         .level-icon {
-            background: url("/img/my-icons/level-icon.png") center;
+            background: url("/img/my-icons/level-icon.png");
             background-size: cover;
         }
         &-active {
@@ -68,7 +68,7 @@ export default class Rate extends Vue {
             overflow: hidden;
             white-space: nowrap;
             .level-icon {
-                background: url("/img/my-active-icons/level-icon.png") center;
+                background: url("/img/my-active-icons/level-icon.png");
                 background-size: cover;
             }
         }

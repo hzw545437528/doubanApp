@@ -1,10 +1,5 @@
 <template>
-    <div
-        class="content-wrap"
-        id="scrollwrap"
-        :class="{isSafari: $store.state.isSafari}"
-        ref="scrollwrap"
-    >
+    <div class="content-wrap" id="scrollwrap" ref="scrollwrap">
         <slot></slot>
     </div>
 </template>

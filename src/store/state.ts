@@ -3,7 +3,9 @@ const state: any = {
     isSafari: localStorage.getItem('isSafari') === '1' ? 1 : 0,
     hotMovies: null,
     upComingMovies: null,
-    audioPageTab: 0
+    audioPageTab: 0,
+    showSearchWrap: false,
+    showTabbar: false
 }
 
 export default state

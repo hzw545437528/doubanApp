@@ -22,7 +22,12 @@
             </div>
         </div>
         <ul class="panel-content">
-            <li class="panel-content-item" v-for="(item, index) in selectInfo" :key="index">
+            <li
+                class="panel-content-item"
+                v-for="(item, index) in selectInfo"
+                :key="index"
+                @click="handleClick(item)"
+            >
                 <img :src="item.images.large" class="item-img" alt />
                 <p class="item-name">{{item.title}}</p>
                 <slot name="item-foot" :itemInfo="item">
@@ -82,6 +87,8 @@ export default class Panel extends Vue {
     }
     @Emit("show-all")
     showAll() {}
+    @Emit("show-detail")
+    handleClick(item: any) {}
     created() {}
 }
 </script>

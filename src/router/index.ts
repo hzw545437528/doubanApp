@@ -22,7 +22,14 @@ const routes = [
     }, {
       path: '/audios',
       name: 'audios',
-      component: () => import("../views/Audios.vue")
+      component: () => import("../views/Audios.vue"),
+      children: [
+        {
+          path: '/detail/:id',
+          name: 'audios/detail',
+          component: () => import("../views/audios/Detail.vue")
+        }
+      ]
     }, {
       path: '/group',
       name: 'group',
@@ -59,7 +66,19 @@ const router = new VueRouter({
 })
 
 router.beforeResolve((to, from, next) => {
-  let isHome = false
+  let isHome = false,
+    searchWrapArr = ['home', 'audios', 'fail'],
+    tabbarArr = ['home', 'audios', 'fair', 'group', 'mine'];
+  if (searchWrapArr.includes((to.name as any))) {
+    vue.$store.state.showSearchWrap = true
+  } else {
+    vue.$store.state.showSearchWrap = false
+  }
+  if (tabbarArr.includes((to.name as any))) {
+    vue.$store.state.showTabbar = true
+  } else {
+    vue.$store.state.showTabbar = false
+  }
   if (to.name == 'home') {
     isHome = true;
   }
