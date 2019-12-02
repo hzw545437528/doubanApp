@@ -42,7 +42,6 @@ export default Vue.extend({
 </script>
 <style lang="scss">
 .load {
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;

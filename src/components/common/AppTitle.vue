@@ -22,9 +22,9 @@ export default class AppTItle extends Vue {
 </script>
 <style lang="scss">
 .app-title {
-    position: fixed;
-    top: 0;
-    left: 0;
+    // position: fixed;
+    // top: 0;
+    // left: 0;
     padding: 10px 15px;
     width: 100vw;
     display: flex;

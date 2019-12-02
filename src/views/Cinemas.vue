@@ -111,8 +111,8 @@ export default class Cinames extends Vue {
 </script>
 <style lang="scss">
 .cinemas {
-    margin-top: 86px;
-    height: calc(100% - 86px);
+    // margin-top: 86px;
+    height: 100vh;
     overflow: hidden;
     .cinemas-maincontainer {
         position: relative;
@@ -138,5 +138,8 @@ export default class Cinames extends Vue {
         border-bottom: 2px solid #2d2d2d;
         border-radius: 2px;
     }
+}
+.load {
+    height: calc(100vh - 86px);
 }
 </style>

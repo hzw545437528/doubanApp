@@ -62,6 +62,7 @@ export default class RateStar extends Vue {
 
         this.$nextTick(() => {
             if (el) {
+                // (el as any).lastChild.style.height = this.width + "px";
                 (el as any).lastChild.style.width = this.divWidth + "px";
             }
         });
@@ -75,14 +76,18 @@ export default class RateStar extends Vue {
 <style lang="scss">
 .rate-star {
     position: relative;
+
     & div {
         display: flex;
         align-items: center;
+        height: 100%;
     }
 }
 .rate-star-active {
     position: absolute;
     display: flex;
+    align-items: center;
+
     left: 0;
     top: 0;
     & > div:last-child {

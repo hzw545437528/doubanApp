@@ -57,7 +57,7 @@ export default class index extends Vue {}
 }
 .search-wrap,
 .tabbar-wrap {
-    position: fixed;
+    // position: fixed;
     left: 0;
 }
 .search-wrap {
@@ -70,7 +70,7 @@ export default class index extends Vue {}
 }
 .main-container {
     width: 100vw;
-    margin-top: 45px;
-    overflow: hidden;
+    // margin-top: 45px;
+    // overflow: hidden;
 }
 </style>

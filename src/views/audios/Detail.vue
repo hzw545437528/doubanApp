@@ -1,181 +1,195 @@
 <template>
     <div class="detail">
         <AppTitle title="电影"></AppTitle>
-        <Scroll>
-            <template #default>
-                <div class="container">
-                    <div class="main-container" v-if="info">
-                        <div class="movie-head">
-                            <img :src="info.images.large" alt />
-                            <div class="movie-headinfo">
-                                <h3 class="movie-headinfo-item movie-headinfo-title">{{info.title}}</h3>
-                                <p
-                                    class="movie-headinfo-item movie-headinfo-originaltitle"
-                                >{{info.original_title}} ({{info.year}})</p>
-                                <p
-                                    class="movie-headinfo-item movie-headinfo-extra"
-                                >{{getExtra(info)}}</p>
-                                <div class="movie-headinfo-btns">
-                                    <button class="btn want">
-                                        <i></i>
-                                        想看
-                                    </button>
-                                    <button class="btn seen">
-                                        <i></i>
-                                        看过
-                                    </button>
+        <div class="scroll-wrap">
+            <Scroll ref="scroll" :options="scrollOptions" @show-reviews="handleShowReviews">
+                <template #default>
+                    <div class="container" ref="container">
+                        <div class="main-container" v-if="info">
+                            <div class="movie-head">
+                                <img :src="info.images.large" alt />
+                                <div class="movie-headinfo">
+                                    <h3
+                                        class="movie-headinfo-item movie-headinfo-title"
+                                    >{{info.title}}</h3>
+                                    <p
+                                        class="movie-headinfo-item movie-headinfo-originaltitle"
+                                    >{{info.original_title}} ({{info.year}})</p>
+                                    <p
+                                        class="movie-headinfo-item movie-headinfo-extra"
+                                    >{{getExtra(info)}}</p>
+                                    <div class="movie-headinfo-btns">
+                                        <button class="btn want">
+                                            <i></i>
+                                            想看
+                                        </button>
+                                        <button class="btn seen">
+                                            <i></i>
+                                            看过
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="movie-rate">
-                            <div class="movie-rateinfo">
-                                <div class="movie-rateinfo-title">
-                                    <h5>豆瓣评分 ™</h5>
-                                    <span>></span>
-                                </div>
-                                <div class="movie-rateinfo-content">
-                                    <div class="movie-rateinfo-contentleft">
-                                        <p>{{info.rating.average}}</p>
-                                        <Rate :level="info.rating.average" :percent="5"></Rate>
+                            <div class="movie-rate">
+                                <div class="movie-rateinfo">
+                                    <div class="movie-rateinfo-title">
+                                        <h5>豆瓣评分 ™</h5>
+                                        <span>></span>
                                     </div>
-                                    <div class="movie-rateinfo-contentright">
-                                        <div class="extra">{{info.ratings_count}}人评分</div>
-                                        <div class="level" v-for="(item, index) in 5" :key="index">
-                                            <div class="star-wrap">
-                                                <Star
-                                                    v-for="(item, index) in item"
-                                                    :key="index"
-                                                    :size="6"
-                                                ></Star>
-                                            </div>
-                                            <div class="line-wrap">
-                                                <div class="line"></div>
-                                                <div class="line-active" :ref="[starClass[index]]"></div>
+                                    <div class="movie-rateinfo-content">
+                                        <div class="movie-rateinfo-contentleft">
+                                            <p>{{info.rating.average}}</p>
+                                            <Rate :level="info.rating.average" :percent="5"></Rate>
+                                        </div>
+                                        <div class="movie-rateinfo-contentright">
+                                            <div class="extra">{{info.ratings_count}}人评分</div>
+                                            <div
+                                                class="level"
+                                                v-for="(item, index) in 5"
+                                                :key="index"
+                                            >
+                                                <div class="star-wrap">
+                                                    <Star
+                                                        v-for="(item, index) in item"
+                                                        :key="index"
+                                                        :size="6"
+                                                    ></Star>
+                                                </div>
+                                                <div class="line-wrap">
+                                                    <div class="line"></div>
+                                                    <div
+                                                        class="line-active"
+                                                        :ref="[starClass[index]]"
+                                                    ></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="movie-rateinfo-extra">
-                                    <span>{{collect_count}}人看过</span>
-                                    <span>{{wish_count}}人想看</span>
+                                    <div class="movie-rateinfo-extra">
+                                        <span>{{collect_count}}人看过</span>
+                                        <span>{{wish_count}}人想看</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="movie-ticket">
-                            <i class="movie-ticket-icon"></i>
-                            <span>选座购票</span>
-                            <span class="float-right">></span>
-                        </div>
-                        <div class="movie-introduction margin">
-                            <h4 class="title">剧情简介</h4>
-                            <div
-                                class="movie-introduction-content hide-text"
-                                ref="movie-introduction-content"
-                            >
-                                <span class="text"></span>
-                                <a
-                                    href="javascript:;"
-                                    style="float: right"
-                                    v-if="more"
-                                    @click="allIntroduce"
-                                >展开</a>
+                            <div class="movie-ticket">
+                                <i class="movie-ticket-icon"></i>
+                                <span>选座购票</span>
+                                <span class="float-right">></span>
                             </div>
-                        </div>
-                        <div class="movie-casts margin">
-                            <h4 class="title">
-                                演职员
-                                <span class="right">全部 {{casts.length}} ></span>
-                            </h4>
-                            <ScrollX>
-                                <template #default>
-                                    <ul class="movie-castslist">
-                                        <li
-                                            class="movie-castslist-item"
-                                            v-for="(item, index) in casts"
-                                            :key="index"
-                                        >
-                                            <img :src="item.avatars.small" alt />
-                                            <p class="movie-castslist-itemname">{{item.name}}</p>
-                                        </li>
-                                    </ul>
-                                </template>
-                            </ScrollX>
-                        </div>
-                        <div class="movie-photos margin" v-if="photos.length">
-                            <h4 class="title">
-                                预告片 / 剧照
-                                <span class="right">全部 {{photos[0].photos_count}} ></span>
-                            </h4>
-                            <ScrollX>
-                                <template #default>
-                                    <ul class="movie-photoslist">
-                                        <li
-                                            class="movie-photoslist-item"
-                                            v-for="(item, index) in photos"
-                                            :key="index"
-                                        >
-                                            <img :src="item.image" alt />
-                                        </li>
-                                    </ul>
-                                </template>
-                            </ScrollX>
-                        </div>
-                        <div class="movie-comments">
-                            <h4 class="title movie-commentstitle">
-                                短评
-                                <img src="/img/my-icons/question-icon.png" alt />
-                                <span class="right">全部短评 {{info.comments_count}} ></span>
-                            </h4>
-                            <div class="movie-commentscontent">
+                            <div class="movie-introduction margin">
+                                <h4 class="title">剧情简介</h4>
                                 <div
-                                    class="movie-commentscontent-item"
-                                    v-for="(item, index) in info.popular_comments"
-                                    :key="index"
+                                    class="movie-introduction-content hide-text"
+                                    ref="movie-introduction-content"
                                 >
-                                    <div class="movie-commentscontent-itemhead">
-                                        <img :src="item.author.avatar" alt />
-                                        <div class="itemhead-info">
-                                            <h4 class="itemhead-info-name">{{item.author.name}}</h4>
-                                            <div class="itemhead-info-rate">
-                                                <RateStar
-                                                    :max="item.rating.max"
-                                                    :value="item.rating.value"
-                                                ></RateStar>
-                                                <div
-                                                    class="itemhead-info-ratetime"
-                                                >{{rateTime(item.created_at)}}</div>
-                                            </div>
-                                        </div>
-                                        <a href="javascript:">
-                                            <span v-for="(item, index) in 3" :key="index"></span>
-                                        </a>
-                                    </div>
-                                    <div
-                                        class="movie-commentscontent-iteminfo"
-                                        :ref="'comment'+index"
-                                    >{{handleComment(item.content,index)}}</div>
-                                    <div class="movie-commentscontent-itemextra">
-                                        <i class="icon praise"></i>
-                                        <span>{{item.useful_count}}</span>
-                                    </div>
+                                    <span class="text"></span>
+                                    <a
+                                        href="javascript:;"
+                                        style="float: right"
+                                        v-if="more"
+                                        @click="allIntroduce"
+                                    >展开</a>
                                 </div>
                             </div>
-                            <div class="movie-commentsall">
-                                查看全部短评
-                                <span class="right">></span>
+                            <div class="movie-casts margin">
+                                <h4 class="title">
+                                    演职员
+                                    <span class="right">全部 {{casts.length}} ></span>
+                                </h4>
+                                <ScrollX>
+                                    <template #default>
+                                        <ul class="movie-castslist">
+                                            <li
+                                                class="movie-castslist-item"
+                                                v-for="(item, index) in casts"
+                                                :key="index"
+                                            >
+                                                <img :src="item.avatars.small" alt />
+                                                <p class="movie-castslist-itemname">{{item.name}}</p>
+                                            </li>
+                                        </ul>
+                                    </template>
+                                </ScrollX>
+                            </div>
+                            <div class="movie-photos margin" v-if="photos.length">
+                                <h4 class="title">
+                                    预告片 / 剧照
+                                    <span class="right">全部 {{photos[0].photos_count}} ></span>
+                                </h4>
+                                <ScrollX>
+                                    <template #default>
+                                        <ul class="movie-photoslist">
+                                            <li
+                                                class="movie-photoslist-item"
+                                                v-for="(item, index) in photos"
+                                                :key="index"
+                                            >
+                                                <img :src="item.image" alt />
+                                            </li>
+                                        </ul>
+                                    </template>
+                                </ScrollX>
+                            </div>
+                            <div class="movie-comments">
+                                <h4 class="title movie-commentstitle">
+                                    短评
+                                    <img src="/img/my-icons/question-icon.png" alt />
+                                    <span class="right">全部短评 {{info.comments_count}} ></span>
+                                </h4>
+                                <div class="movie-commentscontent">
+                                    <div
+                                        class="movie-commentscontent-item"
+                                        v-for="(item, index) in info.popular_comments"
+                                        :key="index"
+                                    >
+                                        <div class="movie-commentscontent-itemhead">
+                                            <img :src="item.author.avatar" alt />
+                                            <div class="itemhead-info">
+                                                <h4 class="itemhead-info-name">{{item.author.name}}</h4>
+                                                <div class="itemhead-info-rate">
+                                                    <RateStar
+                                                        :max="item.rating.max"
+                                                        :value="item.rating.value"
+                                                    ></RateStar>
+                                                    <div
+                                                        class="itemhead-info-ratetime"
+                                                    >{{rateTime(item.created_at)}}</div>
+                                                </div>
+                                            </div>
+                                            <a href="javascript:">
+                                                <span v-for="(item, index) in 3" :key="index"></span>
+                                            </a>
+                                        </div>
+                                        <div
+                                            class="movie-commentscontent-iteminfo"
+                                            :ref="'comment'+index"
+                                        >{{handleComment(item.content,index)}}</div>
+                                        <div class="movie-commentscontent-itemextra">
+                                            <i class="icon praise"></i>
+                                            <span>{{item.useful_count}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="movie-commentsall">
+                                    查看全部短评
+                                    <span class="right">></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <Reviews></Reviews>
-                </div>
-            </template>
-        </Scroll>
+                    <div v-if="reviewsInfo">
+                        <Reviews :reviewsInfo="reviewsInfo"></Reviews>
+                    </div>
+                </template>
+            </Scroll>
+        </div>
+        <div v-if="reviewsInfo && !showReviews" class="reviews-container">
+            <Reviews :reviewsInfo="reviewsInfo"></Reviews>
+        </div>
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Provide } from "vue-property-decorator";
+import { Component, Vue, Provide, Watch } from "vue-property-decorator";
 import Reviews from "./Reviews.vue";
 @Component({
     components: {
@@ -197,6 +211,13 @@ export default class MovieDetail extends Vue {
     @Provide() photos: Array<any> = [];
     @Provide() commentsInfo: any = null;
     @Provide() reviewsInfo: any = null;
+    @Provide() scrollOptions: any = {
+        pullUpLoad: {
+            threshold: 50
+        }
+    };
+    @Provide() showReviews: boolean = false;
+    @Provide() containerHeight: any = 0;
     getMovieInfo() {
         (this as any).$service
             .getService("/api/movie/subject/" + this.id)
@@ -316,8 +337,10 @@ export default class MovieDetail extends Vue {
             .then((res: any) => {
                 this.reviewsInfo = res.data;
                 console.log(res);
-                console.log(this.reviewsInfo.reviews[0].summary);
             });
+    }
+    handleShowReviews(showReviews: boolean) {
+        this.showReviews = showReviews;
     }
     handleComment(comment: any, index: any) {
         let str = "";
@@ -401,6 +424,16 @@ export default class MovieDetail extends Vue {
         this.handleReviews();
     }
     mounted() {}
+    updated() {
+        this.$nextTick(() => {
+            setTimeout(() => {
+                let el = this.$refs["container"] as any;
+                let style = window.getComputedStyle(el);
+                this.containerHeight = style.height;
+                console.log(style.height);
+            }, 500);
+        });
+    }
 }
 </script>
 <style lang="scss">
@@ -408,11 +441,14 @@ $border-bottom-color: #c2c2c2;
 $right-color: #d8d6d6;
 
 .detail {
-    height: calc(100vh - 45px);
+    height: 100vh;
     .wrapper,
     .app-title {
         background-color: #eeecec;
     }
+}
+.scroll-wrap {
+    height: calc(100% - 45px);
 }
 
 .margin {
@@ -815,5 +851,10 @@ $right-color: #d8d6d6;
             }
         }
     }
+}
+.reviews-container {
+    position: absolute;
+    top: calc(100vh - 54px);
+    left: 0;
 }
 </style>

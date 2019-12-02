@@ -47,7 +47,7 @@ export default class Toolbar extends Vue {
 .toolbar {
     display: flex;
     // justify-content: space-between;
-    position: fixed;
+    // position: fixed;
     width: 100vw;
     top: 45px;
     left: 0;

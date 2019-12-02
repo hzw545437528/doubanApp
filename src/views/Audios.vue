@@ -147,7 +147,7 @@ export default class Audios extends Vue {
 </script>
 <style lang="scss">
 .audios {
-    padding-top: 41px;
+    // padding-top: 41px;
     height: calc(100vh - 105px);
 }
 .audios-toolbar {

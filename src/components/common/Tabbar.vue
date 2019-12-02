@@ -63,6 +63,10 @@ export default class Tabbar extends Vue {
 </script>
 <style lang="scss">
 .tabbar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
     display: flex;
     justify-content: space-between;
     .tabbar-item {
