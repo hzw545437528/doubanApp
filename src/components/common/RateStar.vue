@@ -51,13 +51,15 @@ export default class RateStar extends Vue {
     get showValue() {
         let num: any = 0;
         num = ((this.value as number) / (this.max as number)) * 5;
+
         let preNum = num;
         num = Math.ceil(num);
         if (preNum == num) {
             this.divWidth = this.width;
         } else {
-            this.divWidth = (num - preNum) * this.width;
+            this.divWidth = (preNum - Math.floor(preNum)) * this.width;
         }
+
         let el = this.$refs["active"];
 
         this.$nextTick(() => {

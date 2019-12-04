@@ -1,8 +1,8 @@
 <template>
     <div class="input-wrap">
         <Icon class="search-icon"></Icon>
-        <input type="text" :placeholder="title" />
-        <Icon class="scan-icon"></Icon>
+        <input type="text" :placeholder="title" @input="$emit('input',$event.target.value)" />
+        <Icon class="scan-icon" v-if="showScan"></Icon>
     </div>
 </template>
 <script lang="ts">
@@ -15,6 +15,11 @@ export default class searchInput extends Vue {
         default: "文学作品中的衰老描写"
     })
     title!: String;
+    @Prop({
+        type: Boolean,
+        default: true
+    })
+    showScan!: boolean;
 }
 </script>
 <style lang="scss">

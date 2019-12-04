@@ -15,21 +15,31 @@
                 <i class="icon-down"></i>
             </div>
         </div>
-        <div class="upcoming-main-container">
-            <Scroll>
-                <template #default>
-                    <div>
-                        <div v-for="(item,key, index) in sortByTime" :key="index">
-                            <div class="list-head">{{getDate(key)}}{{getDay(key)}}</div>
-                            <List :info="item" :hasPub="false">
-                                <template #list-right="{info}">
-                                    <ListFavor :extra="info.collect_count"></ListFavor>
-                                </template>
-                            </List>
-                        </div>
+        <div class="upcoming-main-container" ref="wrapper">
+            <div>
+                <template v-if="sort == 0">
+                    <div v-for="(item,key, index) in sortByTime" :key="index">
+                        <div class="list-head">{{getDate(key)}}{{getDay(key)}}</div>
+                        <List :info="item" :hasPub="false">
+                            <template #list-right="{info}">
+                                <ListFavor :extra="info.collect_count"></ListFavor>
+                            </template>
+                        </List>
                     </div>
                 </template>
-            </Scroll>
+                <template v-else>
+                    <div v-for="(item, index) in sortByHot" :key="index">
+                        <div
+                            class="list-head"
+                        >{{getDate(item.mainland_pubdate)}}{{getDay(item.mainland_pubdate)}}</div>
+                        <List :info="[item]" :hasPub="false">
+                            <template #list-right="{info}">
+                                <ListFavor :extra="info.collect_count"></ListFavor>
+                            </template>
+                        </List>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </template>
@@ -43,7 +53,9 @@ export default Vue.extend({
         return {
             sort: 0,
             scroll: null,
-            sortByTime: {}
+            sortByTime: {},
+            sortByHot: [],
+            chooseSort: 0
         };
     },
     props: {
@@ -57,8 +69,6 @@ export default Vue.extend({
         handleSortByTime() {
             let obj: any = {};
             this.info.forEach((item: any, index: any) => {
-                // console.log(item);
-                // console.log((this as any).sortByTime[item.mainland_pubdate]);
                 if (!obj[item.mainland_pubdate]) {
                     obj[item.mainland_pubdate] = [item];
                 } else {
@@ -66,10 +76,19 @@ export default Vue.extend({
                 }
             });
             this.sortByTime = Object.assign({}, this.sortByTime, obj);
-            console.log(this.sortByTime);
+            // console.log(this.sortByTime);
+        },
+        hadnleSortByHot() {
+            console.log(this.info);
+            let sortByHot: any = this.info;
+
+            sortByHot.sort((pre: any, curr: any) => {
+                return curr.collect_count - pre.collect_count;
+            });
+            this.sortByHot = sortByHot;
+            console.log(sortByHot);
         },
         getDate(date: any) {
-            console.log(date);
             let d = "";
             let arr = date.split("-");
             d = arr[1] + "月" + arr[2] + "日，";
@@ -88,9 +107,14 @@ export default Vue.extend({
     },
     created() {
         this.handleSortByTime();
+        this.hadnleSortByHot();
     },
     mounted() {
-        this.$nextTick();
+        this.$nextTick(() => {
+            this.scroll = new (this as any).$BScroll(this.$refs["wrapper"], {
+                click: true
+            });
+        });
     }
 });
 </script>
@@ -177,6 +201,7 @@ export default Vue.extend({
     }
 }
 .upcoming-main-container {
+    overflow: hidden;
     height: calc(100% - 48px);
 }
 

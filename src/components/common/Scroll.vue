@@ -13,9 +13,11 @@ export default Vue.extend({
     props: {
         options: {
             type: Object,
-            default: {}
+            default: function() {
+                return {};
+            }
         },
-        containerHeight: Number
+        containerHeight: [String, Number]
     },
     data() {
         return {
@@ -35,13 +37,31 @@ export default Vue.extend({
             };
             options = Object.assign(options, this.options);
             this.scroll = new BScroll(this.$refs["wrapper"], options);
-            // (this.scroll as any).on("pullingUp", () => {
-            //     console.log(1);
-            //     this.$emit("show-reviews", true);
-            //     (this.scroll as any).finishPullUp();
-            // });
+
             (this.scroll as any).on("scroll", () => {
-                console.log((this.scroll as any).y);
+                this.$emit("get-height");
+                let el: any = this.$refs["wrapper"];
+                let height: any = parseFloat(window.getComputedStyle(el)
+                    .height as any);
+
+                let scrollHeight = (this.scroll as any).y - height + 62;
+
+                if (
+                    Math.abs(scrollHeight) >=
+                    parseFloat(this.containerHeight as any)
+                ) {
+                    this.$emit("show-reviews", true);
+                } else {
+                    this.$emit("show-reviews", false);
+                }
+
+                if (
+                    (this.scroll as any).y <=
+                    -parseFloat(this.containerHeight as any)
+                ) {
+                    // (this.scroll as any).disable();
+                    this.$emit("scroll-reviews");
+                }
             });
         });
     },

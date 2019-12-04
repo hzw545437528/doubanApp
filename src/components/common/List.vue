@@ -1,27 +1,25 @@
 <template>
     <div class="list" ref="wrapper">
-        <Scroll>
-            <template #default>
-                <div class="list-item" v-for="(item, index) in info" :key="index">
-                    <img :src="item.images.large" alt />
-                    <div class="list-iteminfo">
-                        <h3 class="list-iteminfo-name">{{item.title}}</h3>
-                        <Rate
-                            class="rate"
-                            :percent="5.2"
-                            :level="item.rating.average"
-                            v-if="item.rating.average"
-                        ></Rate>
-                        <span class="span-none" v-else-if="hasPub">暂无评分</span>
-                        <p
-                            class="list-iteminfo-extra"
-                            :class="{'extra-upcoming': !hasPub}"
-                        >{{itemExtra(item)}}</p>
-                    </div>
-                    <slot name="list-right" :info="item"></slot>
+        <div>
+            <div class="list-item" v-for="(item, index) in info" :key="index">
+                <img :src="item.images.large" alt />
+                <div class="list-iteminfo">
+                    <h3 class="list-iteminfo-name">{{item.title}}</h3>
+                    <Rate
+                        class="rate"
+                        :percent="5.2"
+                        :level="item.rating.average"
+                        v-if="item.rating.average"
+                    ></Rate>
+                    <span class="span-none" v-else-if="hasPub">暂无评分</span>
+                    <p
+                        class="list-iteminfo-extra"
+                        :class="{'extra-upcoming': !hasPub}"
+                    >{{itemExtra(item)}}</p>
                 </div>
-            </template>
-        </Scroll>
+                <slot name="list-right" :info="item"></slot>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -35,6 +33,11 @@ export default class List extends Vue {
         default: true
     })
     hasPub!: boolean;
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    mountScroll!: boolean;
     @Provide() scroll: any = null;
     itemExtra(item: any) {
         let str = "",
@@ -74,10 +77,37 @@ export default class List extends Vue {
         str = `${year} / ${pubaddress} / ${genres} / ${directors} / ${casts}`;
         return str;
     }
+    finishPullUp() {
+        this.scroll.finishPullUp();
+    }
+    refresh() {
+        this.scroll.refresh();
+    }
     mounted() {
-        // this.$nextTick(() => {
-        //     this.scroll = new BScroll(this.$refs["wrapper"], { click: true });
-        // });
+        this.$nextTick(() => {
+            if (this.mountScroll) {
+                this.scroll = new BScroll(this.$refs["wrapper"], {
+                    click: true,
+                    pullDownRefresh: {
+                        threshold: 50,
+                        stop: 20
+                    },
+                    pullUpLoad: {
+                        threshold: 50,
+                        stop: 20
+                    }
+                });
+                this.scroll.on("pullingDown", () => {
+                    console.log(1);
+                    setTimeout(() => {
+                        (this.scroll as any).finishPullDown();
+                    }, 3000);
+                });
+                this.scroll.on("pullingUp", () => {
+                    this.$emit("pulling-up");
+                });
+            }
+        });
     }
 }
 </script>
@@ -86,6 +116,7 @@ export default class List extends Vue {
 .list {
     height: 100%;
     padding-left: 15px;
+    overflow: hidden;
     .list-item {
         position: relative;
         padding: 10px 0;

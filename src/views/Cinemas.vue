@@ -14,7 +14,13 @@
             ref="container"
             v-else
         >
-            <List :info="hot" v-show="selectTab == 0">
+            <List
+                :info="hot"
+                v-show="selectTab == 0"
+                @pulling-up="getMoreHot"
+                :mountScroll="true"
+                ref="hotList"
+            >
                 <template #list-right="{info}">
                     <ListTicket
                         class="list-right"
@@ -60,8 +66,24 @@ export default class Cinames extends Vue {
                 this.getHotRes = res.data;
                 this.hot = res.data.subjects;
                 this.loading = false;
-                console.log(this.hot);
             });
+    }
+    getMoreHot() {
+        if (this.getHotRes.total > this.start) {
+            (this as any).$service
+                .getService("/api/movie/in_theaters", {
+                    city: "福州",
+                    start: this.start
+                })
+                .then((res: any) => {
+                    console.log(res);
+                    this.start += 20;
+
+                    (this.hot as any) = this.hot.concat(res.data.subjects);
+                    (this.$refs["hotList"] as any).refresh();
+                    (this.$refs["hotList"] as any).finishPullUp();
+                });
+        }
     }
 
     getUpComing() {
@@ -116,9 +138,9 @@ export default class Cinames extends Vue {
     overflow: hidden;
     .cinemas-maincontainer {
         position: relative;
-        height: 100%;
+        height: calc(100vh - 86px);
         &.isSafari {
-            height: calc(100% - 70px);
+            height: calc(100% - 156px);
         }
     }
     @media screen and (min-width: 768px) {

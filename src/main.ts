@@ -6,6 +6,7 @@ import store from './store'
 import "./style/common.scss";
 import axios from "axios"
 import service from "./service/service"
+import BScroll from "better-scroll"
 
 
 import "./global/components.js"
@@ -16,6 +17,7 @@ Vue.config.productionTip = false
 
 Vue.prototype.$axios = axios
 Vue.prototype.$service = service
+Vue.prototype.$BScroll = BScroll
 
 const vue = new Vue({
   router,

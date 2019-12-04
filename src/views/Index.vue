@@ -4,6 +4,7 @@
             class="search-wrap"
             :class="{'home-search-wrap': $store.getters.isHome}"
             v-if="$store.state.showSearchWrap"
+            @click="$router.push({name:'search'})"
         >
             <SearchInput></SearchInput>
             <Icon class="email-icon" :class="{'home-search-wrap': $store.getters.isHome}"></Icon>
@@ -40,6 +41,9 @@ export default class index extends Vue {}
     padding: 0.1rem 0.3rem;
     box-sizing: border-box;
     height: 45px;
+    input {
+        -webkit-user-select: none;
+    }
     &.home-search-wrap {
         background-color: #0e932e;
     }

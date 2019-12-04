@@ -1,6 +1,6 @@
 <template>
     <div class="reviews">
-        <div class="reviews-head">
+        <div class="reviews-head" :class="{show: true}">
             <div class="reviews-headlist">
                 <div class="reviews-headlist-item active">
                     影评
@@ -12,28 +12,34 @@
                 </div>
             </div>
         </div>
-        <div class="reviews-main">
-            <div class="reviews-maintitle">
-                <span>影评列表</span>
-                <div class="btns">
-                    <SortBtns></SortBtns>
-                </div>
-            </div>
-            <div class="reviews-mainlist">
-                <div
-                    class="reviews-mainlist-item"
-                    v-for="(item, index) in reviewsInfo.reviews"
-                    :key="index"
-                >
-                    <div class="reviews-mainlist-itemhead">
-                        <img :src="item.author.avatar" alt />
-                        <span>{{item.author.name}}</span>
-                        <span>看过</span>
-                        <RateStar class="rate" :max="item.rating.max" :value="item.rating.value"></RateStar>
+        <div class="reviews-main" ref="reviews-main">
+            <div>
+                <div class="reviews-maintitle">
+                    <span>影评列表</span>
+                    <div class="btns">
+                        <SortBtns></SortBtns>
                     </div>
-                    <div class="reviews-mainlist-itemtitle">{{item.title}}</div>
-                    <div class="reviews-mainlist-iteminfo">{{item.summary}}</div>
-                    <div class="reviews-mainlist-itemextra">{{reviewsExtra(item)}}</div>
+                </div>
+                <div class="reviews-mainlist">
+                    <div
+                        class="reviews-mainlist-item"
+                        v-for="(item, index) in reviewsInfo.reviews"
+                        :key="index"
+                    >
+                        <div class="reviews-mainlist-itemhead">
+                            <img :src="item.author.avatar" alt />
+                            <span>{{item.author.name}}</span>
+                            <span>看过</span>
+                            <RateStar
+                                class="rate"
+                                :max="item.rating.max"
+                                :value="item.rating.value"
+                            ></RateStar>
+                        </div>
+                        <div class="reviews-mainlist-itemtitle">{{item.title}}</div>
+                        <div class="reviews-mainlist-iteminfo">{{item.summary}}</div>
+                        <div class="reviews-mainlist-itemextra">{{reviewsExtra(item)}}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,6 +50,7 @@ import { Component, Vue, Provide, Prop } from "vue-property-decorator";
 @Component
 export default class Reviews extends Vue {
     @Prop(Object) reviewsInfo!: any;
+    @Provide() scroll: any = null;
     reviewsExtra(item: any) {
         let str = "";
         if (item.comments_count) {
@@ -59,6 +66,17 @@ export default class Reviews extends Vue {
     created() {
         console.log(this.reviewsInfo);
     }
+    mounted() {
+        this.$nextTick(() => {
+            let el = this.$refs["reviews-main"];
+
+            this.scroll = new (this as any).$BScroll(el, {
+                click: true,
+                stopPropagation: true
+            });
+            // this.scroll.disable();
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>
@@ -73,7 +91,8 @@ export default class Reviews extends Vue {
         border-radius: 10px 10px 0 0;
         padding: 20px 10px 0 15px;
         background-color: #f1f1f1;
-        &::before {
+        height: 55px;
+        &.show::before {
             content: "";
             position: absolute;
             display: inline-block;
@@ -94,10 +113,11 @@ export default class Reviews extends Vue {
                 padding-bottom: 10px;
                 &extra {
                     position: absolute;
+
                     font-size: 12px;
                     color: #999999;
                     top: 0;
-                    right: -18px;
+                    left: 35px;
                 }
                 &.active {
                     color: #333333;
@@ -107,6 +127,8 @@ export default class Reviews extends Vue {
         }
     }
     .reviews-main {
+        max-height: calc(100vh - 110px);
+        overflow: hidden;
         &title {
             display: flex;
             align-items: center;

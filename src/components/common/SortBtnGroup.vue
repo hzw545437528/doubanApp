@@ -1,7 +1,7 @@
 <template>
     <div class="sort btns">
-        <span :class="{active: sort==0}" @click="sort = 0">时间</span>
-        <span :class="{active: sort==1}" @click="sort = 1">热度</span>
+        <span :class="{active: sort==0}" @click="sort = 0">热门</span>
+        <span :class="{active: sort==1}" @click="sort = 1">最新</span>
         <span class="sort-active" :class="{left:sort==0,right:sort==1}"></span>
     </div>
 </template>

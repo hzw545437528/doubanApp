@@ -1,8 +1,27 @@
 <template>
     <div class="detail">
         <AppTitle title="电影"></AppTitle>
+        <div class="reviews-head" :class="{show: true}" v-if="showReviewsHead">
+            <div class="reviews-headlist">
+                <div class="reviews-headlist-item active">
+                    影评
+                    <span class="reviews-headlist-itemextra">{{reviewsInfo.total}}</span>
+                </div>
+                <div class="reviews-headlist-item">
+                    讨论
+                    <span class="reviews-headlist-itemextra">44</span>
+                </div>
+            </div>
+        </div>
         <div class="scroll-wrap">
-            <Scroll ref="scroll" :options="scrollOptions" @show-reviews="handleShowReviews">
+            <Scroll
+                ref="scroll"
+                @get-height="getHeight"
+                :options="scrollOptions"
+                @show-reviews="handleShowReviews"
+                :containerHeight="containerHeight"
+                @scroll-reviews="scrollReviews"
+            >
                 <template #default>
                     <div class="container" ref="container">
                         <div class="main-container" v-if="info">
@@ -177,7 +196,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="reviewsInfo">
+                    <div v-if="reviewsInfo" class="reviews-wrap" ref="reviews-wrap">
                         <Reviews :reviewsInfo="reviewsInfo"></Reviews>
                     </div>
                 </template>
@@ -217,7 +236,9 @@ export default class MovieDetail extends Vue {
         }
     };
     @Provide() showReviews: boolean = false;
+    @Provide() showReviewsHead: boolean = false;
     @Provide() containerHeight: any = 0;
+    @Provide() reviewsScroll: any = null;
     getMovieInfo() {
         (this as any).$service
             .getService("/api/movie/subject/" + this.id)
@@ -416,6 +437,15 @@ export default class MovieDetail extends Vue {
         }
         return str;
     }
+    getHeight() {
+        let el = this.$refs["container"] as any;
+        let style = window.getComputedStyle(el);
+        this.containerHeight = style.height;
+    }
+    scrollReviews() {
+        let el = this.$refs["reviews-wrap"];
+        // this.reviewsScroll = new (this as any).$BScroll(el, { click: true });
+    }
 
     created() {
         this.id = this.$route.params.id;
@@ -425,14 +455,14 @@ export default class MovieDetail extends Vue {
     }
     mounted() {}
     updated() {
-        this.$nextTick(() => {
-            setTimeout(() => {
-                let el = this.$refs["container"] as any;
-                let style = window.getComputedStyle(el);
-                this.containerHeight = style.height;
-                console.log(style.height);
-            }, 500);
-        });
+        // this.$nextTick(() => {
+        //     setTimeout(() => {
+        //         let el = this.$refs["container"] as any;
+        //         let style = window.getComputedStyle(el);
+        //         this.containerHeight = style.height;
+        //         console.log(style.height);
+        //     }, 500);
+        // });
     }
 }
 </script>
@@ -852,9 +882,44 @@ $right-color: #d8d6d6;
         }
     }
 }
+.reviews-wrap {
+    // max-height: calc(100vh - 45px);
+    // position: relative;
+}
 .reviews-container {
     position: absolute;
-    top: calc(100vh - 54px);
+    top: calc(100vh - 60px);
     left: 0;
+}
+
+.reviews-head {
+    position: relative;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 10px 10px 0 0;
+    padding: 20px 10px 0 15px;
+    background-color: #f1f1f1;
+
+    &list {
+        display: flex;
+        font-size: 16px;
+        color: #999999;
+        &-item {
+            position: relative;
+            margin-right: 40px;
+            padding-bottom: 10px;
+            &extra {
+                position: absolute;
+
+                font-size: 12px;
+                color: #999999;
+                top: 0;
+                left: 35px;
+            }
+            &.active {
+                color: #333333;
+                border-bottom: 2px solid black;
+            }
+        }
+    }
 }
 </style>
